@@ -1,3 +1,5 @@
+# From Joshua Calloway
+
 describe Gist do
 
   describe "should_be_public?" do
