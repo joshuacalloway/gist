@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require File.expand_path('../../lib/gistmeetup', __FILE__)
+
+# For the holdings of options.
+options = {}
+filenames = []
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage:"
+  executable_name = File.split($0)[1]
+  
+  opts.on("-m", "--require MEETUP",
+          "Require the Meetup name") do |meetup|
+    options[:meetup] = meetup
+  end
+  opts.on("-c", "--require COMMENT",
+          "Require the Comments to the code") do |comment|
+    options[:comment] = comment
+  end
+
+  opts.on("--login", "Authenticate gist on this computer.") do
+    Gistmeetup.login!
+    exit
+  end
+end
+
+parser.parse!
+
+if options[:meetup] == nil
+  print parser
+  exit 1
+end
+if options[:comment] == nil
+  print parser
+  exit 1
+end
+
+to_read = ARGV.empty? ? ['-'] : ARGV
+files = {}
+to_read.zip(filenames).each do |(file, name)|
+  files[name || file] =
+    begin
+      File.read(File.expand_path(file))
+    rescue => e
+      puts "Could not read file #{file} , name : #{name}"
+      raise e.extend(Gistmeetup::Error)
+    end
+end
+Gistmeetup.post(options[:meetup], options[:comment], files, options)
+
+
+
