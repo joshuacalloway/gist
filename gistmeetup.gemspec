@@ -11,6 +11,6 @@ Gem::Specification.new do |s|
     'http://rubygems.org/gems/gistmeetup'
   s.executables << 'gistmeetup'
   s.add_dependency "gist", ">= 4.1.1"
-  s.add_dependency "rMeetup", ">= 3.0" 
+  s.add_dependency "rubymeetup", ">= 3.0" 
   s.license       = 'MIT'
 end
