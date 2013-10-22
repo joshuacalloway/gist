@@ -18,11 +18,21 @@ module Gistmeetup
     RMeetup::Client.api_key = "311e1e54e55667752236e673758662c"
 
     events = RMeetup::Client.fetch(:events, {:group_urlname => "#{meetup}"})
-
-    nextEvent = events[0]
-    url = ret["html_url"]
-    RMeetup::Client.post(:event_comment, {:event_id => "#{nextEvent.id}", :comment => "#{comment} - #{url}" })
-    "Code posted on #{ret} and on Meetup comments for "#{meetup}"
+    if events.empty?
+      groups = RMeetup::Client.fetch(:groups, {:group_urlname => "#{meetup}"})
+      ret = ""
+      if groups.empty?
+        ret = "The meetup '#{meetup}' does not exist." 
+      else
+        ret = "No meetup events exist for '#{meetup}'"
+      end
+      ret
+    else
+      nextEvent = events[0]
+      url = ret["html_url"]
+      RMeetup::Client.post(:event_comment, {:event_id => "#{nextEvent.id}", :comment => "#{comment} - #{url}" })
+      "Posted to github on '#{url}' and link to it on '#{meetup}' comments"
+    end
   end
 
   def login!(credentials={})

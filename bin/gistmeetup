@@ -39,16 +39,23 @@ end
 
 to_read = ARGV.empty? ? ['-'] : ARGV
 files = {}
+error = false
 to_read.zip(filenames).each do |(file, name)|
   files[name || file] =
     begin
       File.read(File.expand_path(file))
     rescue => e
-      puts "Could not read file #{file} , name : #{name}"
-      raise e.extend(Gistmeetup::Error)
+      puts "File #{file} does not exist or is not readable."
+      error = true
     end
 end
-Gistmeetup.post(options[:meetup], options[:comment], files, options)
-
+#puts "options[:meetup] : #{options[:meetup]}"
+#puts "files : #{files}"
+#puts "options : #{options}"
+if !error
+  ret = Gistmeetup.post(options[:meetup], options[:comment], files, options)
+  puts ""
+  puts "#{ret}"
+end
 
 
